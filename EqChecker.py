@@ -53,8 +53,6 @@ def create_eq_checker_file(obf, inout_switch = 0):
     org_name, org_value = random.choice(list(obf.original_module.items()))
     mod_org = org_value
 
-    print(mod_org.print_module())
-
     obf_name, obf_value = random.choice(list(obf.obfuscated_module.items()))
 
     file_string = file_string + org_name + "_verify_top" + " ( "
