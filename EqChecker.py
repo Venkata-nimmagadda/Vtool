@@ -31,7 +31,7 @@ def extract_keys(obj):
     if key_matches:
         for match in key_matches:
             count = count+1
-            obj.key_values[(concatinator.join(key_inputs), count)] = match.group()
+            obj.key_values[(concatinator.join(key_inputs), count)] = re.sub("x", "0",match.group())
 
     return obj
 
