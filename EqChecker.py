@@ -161,10 +161,15 @@ def create_assertions_file(obf, inout_switch = 0):
                 else:
                     file_string = file_string + "inout wire " + name + " ;\n"
         file_string = file_string + "\n"
+        file_string = file_string + "property key_insertion;\n"
         for (key_set, cycle), value in obf.key_values.items():
-            file_string = file_string + "property key_at_cycle_" + str(cycle) + ";\n\t( ##"+ str(cycle) +" {" + key_set + "} == "+ str(len(value)) + "\'b" + str(value) + " );\nendproperty\n\n"
-        for (key_set, cycle), value in obf.key_values.items():
-            file_string = file_string + "constrain_key_cycle_" + str(cycle) + " : assume property ( key_at_cycle_" + str(cycle) + " );\n" 
+            file_string = file_string + " ##1 ( {" + key_set + "} == "+ str(len(value)) + "\'b" + str(value) + " )"
+        file_string = file_string + ";\nendproperty\n\n"
+        file_string = file_string + "constrain_key : assume property ( key_insertion );\n"
+        # for (key_set, cycle), value in obf.key_values.items():
+        #     file_string = file_string + "property key_at_cycle_" + str(cycle) + ";\n\t( ##"+ str(cycle) +" {" + key_set + "} == "+ str(len(value)) + "\'b" + str(value) + " );\nendproperty\n\n"
+        # for (key_set, cycle), value in obf.key_values.items():
+        #     file_string = file_string + "constrain_key_cycle_" + str(cycle) + " : assume property ( key_at_cycle_" + str(cycle) + " );\n" 
         file_string = file_string + "\nproperty eq_output;\n\t ##"+ str(len(obf.key_values)+1) +" (" + verification_signal + " == 0);\nendproperty\n\n"
         file_string = file_string + "check_eq_output : assert property (eq_output);\n\n"
         file_string = file_string + "endmodule\n\n"

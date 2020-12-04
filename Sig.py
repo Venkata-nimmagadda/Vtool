@@ -62,5 +62,4 @@ def signal_search(pattern, sig_type, code):
                 exit()
             dictionary[name.group()] = Signal(sig_type, name.group(), size)
         size = 1
-    # print(dictionary.keys())
     return dictionary
