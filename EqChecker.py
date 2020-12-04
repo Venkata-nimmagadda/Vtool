@@ -159,18 +159,39 @@ def create_assertions_file(obf, inout_switch = 0):
                 else:
                     file_string = file_string + "inout wire " + name + " ;\n"
         file_string = file_string + "\n"
-        file_string = file_string + "property key_insertion;\n"
+
+        #  key assertion sequence
+
+        file_string = file_string + "sequence key_insertion;\n"
         for (key_set, cycle), value in obf.key_values.items():
             file_string = file_string + " ##1 ( {" + key_set + "} == "+ str(len(value)) + "\'b" + str(value) + " )"
-        file_string = file_string + ";\nendproperty\n\n"
-        file_string = file_string + "constrain_key : assume property ( key_insertion );\n"
+        file_string = file_string + ";\nendsequence\n\n"
+
+        file_string = file_string + "\nproperty eq_output;\n\t key_insertion |=> (" + verification_signal + " == 0);\nendproperty\n\n"
+        file_string = file_string + "check_eq_output : assert property (eq_output);\n\n"
+        file_string = file_string + "endmodule\n\n"
+
+        # key assertion as property
+
+        # file_string = file_string + "property key_insertion;\n"
+        # for (key_set, cycle), value in obf.key_values.items():
+        #     file_string = file_string + " ##1 ( {" + key_set + "} == "+ str(len(value)) + "\'b" + str(value) + " )"
+        # file_string = file_string + ";\nendproperty\n\n"
+        # file_string = file_string + "constrain_key : assume property ( key_insertion );\n\n"
+
+        # key assertion as multiple assumptions 
+
         # for (key_set, cycle), value in obf.key_values.items():
         #     file_string = file_string + "property key_at_cycle_" + str(cycle) + ";\n\t( ##"+ str(cycle) +" {" + key_set + "} == "+ str(len(value)) + "\'b" + str(value) + " );\nendproperty\n\n"
         # for (key_set, cycle), value in obf.key_values.items():
-        #     file_string = file_string + "constrain_key_cycle_" + str(cycle) + " : assume property ( key_at_cycle_" + str(cycle) + " );\n" 
-        file_string = file_string + "\nproperty eq_output;\n\t ##"+ str(len(obf.key_values)+1) +" (" + verification_signal + " == 0);\nendproperty\n\n"
-        file_string = file_string + "check_eq_output : assert property (eq_output);\n\n"
-        file_string = file_string + "endmodule\n\n"
+        #     file_string = file_string + "constrain_key_cycle_" + str(cycle) + " : assume property ( key_at_cycle_" + str(cycle) + " );\n"
+
+        # assertion for equivalence checker output 
+
+        # file_string = file_string + "\nproperty eq_output;\n\t ##"+ str(len(obf.key_values)+1) +" (" + verification_signal + " == 0);\nendproperty\n\n"
+        # file_string = file_string + "check_eq_output : assert property (eq_output);\n\n"
+        # file_string = file_string + "endmodule\n\n"
+
         file_string = file_string + "bind " + mod_name + "_verify_top " + mod_name + "_assertions assertions( "
         for name in mod_org.inputs.keys():
             file_string = file_string + "." +name +"("+name+ "), "
